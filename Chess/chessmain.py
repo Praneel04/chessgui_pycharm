@@ -63,6 +63,8 @@ def main():
                         gs.makeMove(Move)
                         print(gs.is_in_check(gs.board))
 
+
+
                         # print(Move.is_checkmate(gs.board))
                         # print(gs.moveLog)
 
