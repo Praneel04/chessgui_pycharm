@@ -45,7 +45,7 @@ def main():
                     playerClicks.append(sq_selected)  # append for first and second clicks
 
                 if len(playerClicks) == 2:
-                    Move = chessenggit.move(playerClicks[0], playerClicks[1], gs.board, gs.whiteToMove, gs)
+                    Move = chesseng.move(playerClicks[0], playerClicks[1], gs.board, gs.whiteToMove, gs)
                     # if(gs.is_checkmate()):
                     #     print("Game over!Checkmate")
                     #     running=False
