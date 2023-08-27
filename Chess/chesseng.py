@@ -152,17 +152,17 @@ class Gamestate():
                 self.moveLog.append(move)
                 self.whiteToMove = not self.whiteToMove
 
-    def is_in_check(self, board):
+    def is_in_check(self, board,whitetoMove):
         king_row = -1
         king_col = -1
         for row in range(len(board)):
             for col in range(len(board[row])):
-                if self.board[row][col] == ('wK' if self.whiteToMove else 'bK'):
+                if self.board[row][col] == ('wK' if whitetoMove else 'bK'):
                     king_row = row
                     king_col = col
                     break
 
-        opponent_color = 'b' if self.whiteToMove else 'w'
+        opponent_color = 'b' if whitetoMove else 'w'
         opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
         # Add possible knight move combinations
@@ -378,10 +378,12 @@ class move():
             temp_board = [row[:] for row in board]
             temp_board[self.startRow][self.startCol] = "--"
             temp_board[self.endRow][self.endCol] = self.pieceMoved
+
             print(temp_board)
+            print(self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove))
 
             # Check if the move would put the king in check after it is made
-            if self.gamestate.is_in_check(temp_board):
+            if self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove):
                 return False
             elif self.pieceMoved == 'bN' or self.pieceMoved == 'wN':
                 if (abs(self.endRow - self.startRow) == 2 and abs(self.endCol - self.startCol) == 1) or (

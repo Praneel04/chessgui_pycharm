@@ -61,7 +61,7 @@ def main():
 
                         # gs.generate_possible_moves()
                         gs.makeMove(Move)
-                        print(gs.is_in_check(gs.board))
+                        print(gs.is_in_check(gs.board,gs.whiteToMove))
 
 
 
