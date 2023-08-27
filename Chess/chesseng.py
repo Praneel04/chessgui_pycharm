@@ -67,9 +67,9 @@ class Gamestate():
         # First, check if the current player is in check
         if len(self.moveLog) == 0:
             pass
-        elif not self.moveLog[-1].is_in_check(self.board):
+        elif not self.is_in_check(self.board,self.whiteToMove):
             return False
-        elif self.moveLog[-1].is_in_check(self.board):
+        elif self.is_in_check(self.board,self.whiteToMove):
             king_row, king_col = self.find_king(self.board)
 
             # Generate all possible moves for the current player
@@ -80,7 +80,7 @@ class Gamestate():
                 temp_board = [row[:] for row in self.board]
                 temp_board[move_obj.startRow][move_obj.startCol] = "--"
                 temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
-                if not move_obj.is_in_check(temp_board):
+                if not self.is_in_check(temp_board,self.whiteToMove):
                     return False  # At least one legal move can escape check
 
             return True  # No legal moves to escape check, it's checkmate
@@ -90,15 +90,15 @@ class Gamestate():
         for r in range(8):
             for c in range(8):
                 piece = self.board[r][c]
-                if (piece[0] == 'w' and not self.whiteToMove) or (piece[0] == 'b' and self.whiteToMove):
+                if (piece[0] == 'w' and self.whiteToMove) or (piece[0] == 'b' and not self.whiteToMove):
                     for row in range(8):
                         for col in range(8):
                             move_obj = move((r, c), (row, col), self.board, not self.whiteToMove, self)
-                            if move_obj.is_in_check(self.board):
-                                pass
+                            # if self.is_in_check(self.board,self.whiteToMove):
+                            #     pass
                             if move_obj.isValid(self.board):
                                 possible_moves.append(move_obj)
-        print(possible_moves)
+        # print(possible_moves)
         print(len(possible_moves))
         for i in possible_moves:
             print(i.startRow, i.startCol)
@@ -379,8 +379,8 @@ class move():
             temp_board[self.startRow][self.startCol] = "--"
             temp_board[self.endRow][self.endCol] = self.pieceMoved
 
-            print(temp_board)
-            print(self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove))
+            # print(temp_board)
+            # print(self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove))
 
             # Check if the move would put the king in check after it is made
             if self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove):

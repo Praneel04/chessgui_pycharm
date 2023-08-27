@@ -54,7 +54,7 @@ def main():
                     #     print("Checkmate! Game Over.")
                     #     running = False
                     # print(Move.is_in_check(gs.board))
-
+                    # print(gs.is_checkmate())
                     if Move.isValid(gs.board):
                         gs.moveLog.append(Move)
                         # print(Move.checkmate(gs.board))
@@ -65,7 +65,8 @@ def main():
 
 
 
-                        # print(Move.is_checkmate(gs.board))
+
+                        print(gs.is_checkmate())
                         # print(gs.moveLog)
 
 
