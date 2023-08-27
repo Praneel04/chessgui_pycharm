@@ -157,7 +157,7 @@ class Gamestate():
         king_col = -1
         for row in range(len(board)):
             for col in range(len(board[row])):
-                if self.board[row][col] == ('wK' if whitetoMove else 'bK'):
+                if board[row][col] == ('wK' if whitetoMove else 'bK'):
                     king_row = row
                     king_col = col
                     break
