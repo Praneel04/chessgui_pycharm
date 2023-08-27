@@ -54,12 +54,14 @@ def main():
                     #     print("Checkmate! Game Over.")
                     #     running = False
                     # print(Move.is_in_check(gs.board))
+
                     if Move.isValid(gs.board):
                         gs.moveLog.append(Move)
                         # print(Move.checkmate(gs.board))
 
                         # gs.generate_possible_moves()
                         gs.makeMove(Move)
+                        print(gs.is_in_check(gs.board))
 
                         # print(Move.is_checkmate(gs.board))
                         # print(gs.moveLog)

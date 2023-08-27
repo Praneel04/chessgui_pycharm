@@ -156,6 +156,40 @@ class Gamestate():
                     self.board[move.endRow][move.endCol] = move.pieceMoved
                     self.moveLog.append(move)
                     self.whiteToMove = not self.whiteToMove
+    def is_in_check(self,board):
+        king_row = -1
+        king_col = -1
+        for row in range(len(board)):
+            for col in range(len(board[row])):
+                if self.board[row][col] == ('wK' if self.whiteToMove else 'bK'):
+                    king_row = row
+                    king_col = col
+                    break
+
+        opponent_color = 'b' if self.whiteToMove else 'w'
+        opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        # Add possible knight move combinations
+        knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+
+        for dr, dc in opponent_directions + knight_moves:
+            r, c = king_row + dr, king_col + dc
+            while 0 <= r < 8 and 0 <= c < 8:
+                piece = board[r][c]
+                if piece != "--":
+                    if piece[0] == opponent_color:
+                        if (piece[1] == 'Q' or
+                                (abs(dr) == 1 and abs(dc) == 0 and piece[1] == 'R') or  # Rook
+                                (abs(dr) == 0 and abs(dc) == 1 and piece[1] == 'R') or  # Rook
+                                (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'B') or  # Bishop
+                                (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
+                                (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N')):  # Knight
+                            return True
+                    break  # Stop checking in this direction if an obstacle is encountered
+                r += dr
+                c += dc
+
+        return False
 
 
 
@@ -190,40 +224,7 @@ class move():
             self.has_kingside_rook_moved = False
 
 
-    def is_in_check(self, board):
-        king_row = -1
-        king_col = -1
-        for row in range(len(board)):
-            for col in range(len(board[row])):
-                if board[row][col] == ('wK' if self.whitetomove else 'bK'):
-                    king_row = row
-                    king_col = col
-                    break
 
-        opponent_color = 'b' if self.whitetomove else 'w'
-        opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-
-        # Add possible knight move combinations
-        knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
-
-        for dr, dc in opponent_directions + knight_moves:
-            r, c = king_row + dr, king_col + dc
-            while 0 <= r < 8 and 0 <= c < 8:
-                piece = board[r][c]
-                if piece != "--":
-                    if piece[0] == opponent_color:
-                        if (piece[1] == 'Q' or
-                                (abs(dr) == 1 and abs(dc) == 0 and piece[1] == 'R') or  # Rook
-                                (abs(dr) == 0 and abs(dc) == 1 and piece[1] == 'R') or  # Rook
-                                (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'B') or  # Bishop
-                                (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
-                                (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N')):  # Knight
-                            return True
-                    break  # Stop checking in this direction if an obstacle is encountered
-                r += dr
-                c += dc
-
-        return False
     # def is_in_check_after_move(self):
     #     # Simulate the move and check if it leads to check
     #     temp_board = [row[:] for row in self.gamestate.board]
@@ -354,7 +355,7 @@ class move():
             temp_board[self.endRow][self.endCol] = self.pieceMoved
 
             # Check if the move would put the king in check after it is made
-            if self.is_in_check(temp_board):
+            if self.gamestate.is_in_check(temp_board):
                 return False
             elif self.pieceMoved == 'bN' or self.pieceMoved == 'wN':
                 if (abs(self.endRow - self.startRow) == 2 and abs(self.endCol - self.startCol) == 1) or (
