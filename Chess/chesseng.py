@@ -53,6 +53,40 @@ class Gamestate():
         if piece not in ['Q', 'R', 'N', 'B']:
             piece = 'Q'  # Default to Queen
         return piece
+    def is_in_check(self, board,whitetoMove):
+        king_row = -1
+        king_col = -1
+        for row in range(len(board)):
+            for col in range(len(board[row])):
+                if board[row][col] == ('wK' if whitetoMove else 'bK'):
+                    king_row = row
+                    king_col = col
+                    break
+
+        opponent_color = 'b' if whitetoMove else 'w'
+        opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        # Add possible knight move combinations
+        knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+
+        for dr, dc in opponent_directions + knight_moves:
+            r, c = king_row + dr, king_col + dc
+            while 0 <= r < 8 and 0 <= c < 8:
+                piece = board[r][c]
+                if piece != "--":
+                    if piece[0] == opponent_color:
+                        if (piece[1] == 'Q' or
+                                (abs(dr) == 1 and abs(dc) == 0 and piece[1] == 'R') or  # Rook
+                                (abs(dr) == 0 and abs(dc) == 1 and piece[1] == 'R') or  # Rook
+                                (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'B') or  # Bishop
+                                (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
+                                (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N')):  # Knight
+                            return True
+                    break  # Stop checking in this direction if an obstacle is encountered
+                r += dr
+                c += dc
+
+        return False
 
     def find_king(self, board):
 
@@ -63,17 +97,20 @@ class Gamestate():
                     return r, c
 
     def is_checkmate(self):
-
+        print(self.is_in_check(self.board, self.whiteToMove))
         # First, check if the current player is in check
         if len(self.moveLog) == 0:
-            pass
-        elif not self.is_in_check(self.board,self.whiteToMove):
             return False
+        # elif not self.is_in_check(self.board,self.whiteToMove):
+        #     return False
+
+
         elif self.is_in_check(self.board,self.whiteToMove):
-            king_row, king_col = self.find_king(self.board)
+            # king_row, king_col = self.find_king(self.board)
 
             # Generate all possible moves for the current player
             possible_moves = self.generate_possible_moves()
+            print(possible_moves)
 
             # Check if any of the possible moves can get the king out of check
             for move_obj in possible_moves:
@@ -84,6 +121,27 @@ class Gamestate():
                     return False  # At least one legal move can escape check
 
             return True  # No legal moves to escape check, it's checkmate
+        return False
+    # def is_stalemate(self):
+    #     if not self.is_in_check(self.board, self.whiteToMove):
+    #         possible_moves1 = self.generate_possible_moves()
+    #         print(possible_moves1)
+    #
+    #         if not possible_moves1:
+    #             return True  # No legal moves available, it's stalemate
+    #
+    #         for move_obj in possible_moves1:
+    #             temp_board1 = [row[:] for row in self.board]
+    #             temp_board1[move_obj.startRow][move_obj.startCol] = "--"
+    #             temp_board1[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
+    #
+    #             if not self.is_in_check(temp_board1, self.whiteToMove):
+    #                 return False  # At least one legal move is available
+    #
+    #         return True  # All moves lead to check, it's stalemate
+    #     else:
+    #
+    #         return False  # Player is in check, not stalemate
 
     def generate_possible_moves(self):
         possible_moves = []
@@ -93,10 +151,15 @@ class Gamestate():
                 if (piece[0] == 'w' and self.whiteToMove) or (piece[0] == 'b' and not self.whiteToMove):
                     for row in range(8):
                         for col in range(8):
-                            move_obj = move((r, c), (row, col), self.board, not self.whiteToMove, self)
-                            # if self.is_in_check(self.board,self.whiteToMove):
-                            #     pass
-                            if move_obj.isValid(self.board):
+                            move_obj = move((r, c), (row, col), self.board,self.whiteToMove, self)
+                            temp_board = [row[:] for row in self.board]
+                            temp_board[move_obj.startRow][move_obj.startCol] = "--"
+                            temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
+
+
+                            if self.is_in_check(temp_board,self.whiteToMove):
+                                pass
+                            elif move_obj.isValid(self.board):
                                 possible_moves.append(move_obj)
         # print(possible_moves)
         print(len(possible_moves))
@@ -152,40 +215,6 @@ class Gamestate():
                 self.moveLog.append(move)
                 self.whiteToMove = not self.whiteToMove
 
-    def is_in_check(self, board,whitetoMove):
-        king_row = -1
-        king_col = -1
-        for row in range(len(board)):
-            for col in range(len(board[row])):
-                if board[row][col] == ('wK' if whitetoMove else 'bK'):
-                    king_row = row
-                    king_col = col
-                    break
-
-        opponent_color = 'b' if whitetoMove else 'w'
-        opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-
-        # Add possible knight move combinations
-        knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
-
-        for dr, dc in opponent_directions + knight_moves:
-            r, c = king_row + dr, king_col + dc
-            while 0 <= r < 8 and 0 <= c < 8:
-                piece = board[r][c]
-                if piece != "--":
-                    if piece[0] == opponent_color:
-                        if (piece[1] == 'Q' or
-                                (abs(dr) == 1 and abs(dc) == 0 and piece[1] == 'R') or  # Rook
-                                (abs(dr) == 0 and abs(dc) == 1 and piece[1] == 'R') or  # Rook
-                                (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'B') or  # Bishop
-                                (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
-                                (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N')):  # Knight
-                            return True
-                    break  # Stop checking in this direction if an obstacle is encountered
-                r += dr
-                c += dc
-
-        return False
 
     # def is_in_check(self, board):
     #     king_row = -1
