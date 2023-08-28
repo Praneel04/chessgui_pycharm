@@ -68,7 +68,10 @@ def main():
 
 
                         gs.makeMove(Move)
-                        gs.is_checkmate()
+                        if(gs.is_checkmate()):
+                            print("Its Checkmate!")
+                            running=False
+
                         # if(gs.is_checkmate()):
                         #     print("Checkmate")
                         #     running=False

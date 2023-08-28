@@ -111,17 +111,21 @@ class Gamestate():
             # Generate all possible moves for the current player
             possible_moves = self.generate_possible_moves()
             print(possible_moves)
+            if(len(possible_moves))==0:
+                return True
+            else:
+                return False
 
             # Check if any of the possible moves can get the king out of check
-            for move_obj in possible_moves:
-                temp_board = [row[:] for row in self.board]
-                temp_board[move_obj.startRow][move_obj.startCol] = "--"
-                temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
-                if not self.is_in_check(temp_board,self.whiteToMove):
-                    return False  # At least one legal move can escape check
-
-            return True  # No legal moves to escape check, it's checkmate
-        return False
+        #     for move_obj in possible_moves:
+        #         temp_board = [row[:] for row in self.board]
+        #         temp_board[move_obj.startRow][move_obj.startCol] = "--"
+        #         temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
+        #         if not self.is_in_check(temp_board,self.whiteToMove):
+        #             return False  # At least one legal move can escape check
+        #
+        #     return True  # No legal moves to escape check, it's checkmate
+        # return False
     # def is_stalemate(self):
     #     if not self.is_in_check(self.board, self.whiteToMove):
     #         possible_moves1 = self.generate_possible_moves()
@@ -566,10 +570,9 @@ class move():
                     if (
 
                             (self.endRow - self.startRow) == 1 if not self.whitetomove else (
-                                                                                                    self.endRow - self.startRow) == -1
+                            self.endRow - self.startRow) == -1
 
-                                                                                            and board[self.endRow][
-                                                                                                self.endCol] != "--"
+                            and board[self.endRow][self.endCol] != "--"
 
                     ):  # Regular capture
 
@@ -634,11 +637,15 @@ class move():
 
                     if (
 
+
                             (self.startRow == 1 or self.startRow == 6)
 
-                            # and board[2][self.endCol] == "--"
-                            #
-                            # and board[3][self.endCol] == "--"
+                            and (((board[2][self.endCol] == "--"
+
+                            and board[3][self.endCol] == "--") and not self.whitetomove)
+                            or
+                                 ((board[5][self.endCol]=="--") and board[4][self.endCol]=="--" and self.whitetomove)
+                    )
 
                     ):
 
