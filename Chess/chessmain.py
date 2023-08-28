@@ -71,6 +71,9 @@ def main():
                         if(gs.is_checkmate()):
                             print("Its Checkmate!")
                             running=False
+                        if(gs.is_stalemate()):
+                            print("Its Stalemate!")
+                            running=False
 
                         # if(gs.is_checkmate()):
                         #     print("Checkmate")

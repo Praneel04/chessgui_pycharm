@@ -126,26 +126,29 @@ class Gamestate():
         #
         #     return True  # No legal moves to escape check, it's checkmate
         # return False
-    # def is_stalemate(self):
-    #     if not self.is_in_check(self.board, self.whiteToMove):
-    #         possible_moves1 = self.generate_possible_moves()
-    #         print(possible_moves1)
-    #
-    #         if not possible_moves1:
-    #             return True  # No legal moves available, it's stalemate
-    #
-    #         for move_obj in possible_moves1:
-    #             temp_board1 = [row[:] for row in self.board]
-    #             temp_board1[move_obj.startRow][move_obj.startCol] = "--"
-    #             temp_board1[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
-    #
-    #             if not self.is_in_check(temp_board1, self.whiteToMove):
-    #                 return False  # At least one legal move is available
-    #
-    #         return True  # All moves lead to check, it's stalemate
-    #     else:
-    #
-    #         return False  # Player is in check, not stalemate
+    def is_stalemate(self):
+        if not self.is_in_check(self.board, self.whiteToMove):
+            possible_moves1 = self.generate_possible_moves()
+            # print(possible_moves1)
+            if(len(possible_moves1))==0:
+                return True
+            else:
+                return False
+        #     if not possible_moves1:
+        #         return True  # No legal moves available, it's stalemate
+        #
+        #     for move_obj in possible_moves1:
+        #         temp_board1 = [row[:] for row in self.board]
+        #         temp_board1[move_obj.startRow][move_obj.startCol] = "--"
+        #         temp_board1[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
+        #
+        #         if not self.is_in_check(temp_board1, self.whiteToMove):
+        #             return False  # At least one legal move is available
+        #
+        #     return True  # All moves lead to check, it's stalemate
+        # else:
+        #
+        #     return False  # Player is in check, not stalemate
 
     def generate_possible_moves(self):
         possible_moves = []
@@ -708,7 +711,7 @@ class move():
                             return (
                                     board[0][5] == "--"
                                     and board[0][6] == "--"
-                                    and not self.is_in_check(board)
+                                    and not self.gamestate.is_in_check(board,self.whitetomove)
                                 # and not self.is_square_attacked(0, 4, board)
                                 # and not self.is_square_attacked(0, 5, board)
                                 # and not self.is_square_attacked(0, 6, board)
@@ -720,7 +723,7 @@ class move():
                                     board[0][1] == "--"
                                     and board[0][2] == "--"
                                     and board[0][3] == "--"
-                                    and not self.is_in_check(board)
+                                    and not self.gamestate.is_in_check(board,self.whitetomove)
                                 # and not self.is_square_attacked(0, 4, board)
                                 # and not self.is_square_attacked(0, 3, board)
                                 # and not self.is_square_attacked(0, 2, board)
