@@ -46,55 +46,26 @@ def main():
 
                 if len(playerClicks) == 2:
                     Move = chesseng.move(playerClicks[0], playerClicks[1], gs.board, gs.whiteToMove, gs)
-                    # if(gs.is_checkmate()):
-                    #     print("Game over!Checkmate")
-                    #     running=False
-                    # checkmate = chesseng.checkmate(gs, Move)
-                    # if checkmate.is_checkmate(gs.board):
-                    #     print("Checkmate! Game Over.")
-                    #     running = False
-                    # print(Move.is_in_check(gs.board))
-                    print(gs.moveLog)
-                    # print(gs.is_checkmate())
+
+                    # print(gs.moveLog)
+
 
                     if Move.isValid(gs.board):
 
-                        gs.moveLog.append(Move)
+                        gs.moveLog.append(Move.getChessNotation())
 
 
-                        # print(Move.checkmate(gs.board))
-
-                        # gs.generate_possible_moves()
 
 
                         gs.makeMove(Move)
+                        print(gs.moveLog)
+                        print(Move.getChessNotation())
                         if(gs.is_checkmate()):
                             print("Its Checkmate!")
                             running=False
                         if(gs.is_stalemate()):
                             print("Its Stalemate!")
                             running=False
-
-                        # if(gs.is_checkmate()):
-                        #     print("Checkmate")
-                        #     running=False
-                        # elif(gs.is_stalemate()):
-                        #     print("Stalemate")
-                        #     running=False
-                        # else:
-                        #     pass
-
-
-
-
-
-
-                        # print(gs.is_checkmate())
-                        # print(gs.moveLog)
-
-
-                        # print(checkmate.is_checkmate(gs.board))
-
                     else:
                         sq_selected = ()
                         playerClicks = []
@@ -129,9 +100,6 @@ def drawPieces(screen, board):
                 screen.blit(IMAGES[piece], p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 
-# def isValid(StartSq,EndSq,piece):
-#     if piece=="wp":
-#         if()
 
 
 if __name__ == "__main__":

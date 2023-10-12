@@ -82,7 +82,7 @@ class Gamestate():
                                 (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
                                 (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N')):  # Knight
                             return True
-                    break  # Stop checking in this direction if an obstacle is encountered
+                    break
                 r += dr
                 c += dc
 
@@ -98,11 +98,9 @@ class Gamestate():
 
     def is_checkmate(self):
         print(self.is_in_check(self.board, self.whiteToMove))
-        # First, check if the current player is in check
         if len(self.moveLog) == 0:
             return False
-        # elif not self.is_in_check(self.board,self.whiteToMove):
-        #     return False
+
 
 
         elif self.is_in_check(self.board,self.whiteToMove):
@@ -116,16 +114,7 @@ class Gamestate():
             else:
                 return False
 
-            # Check if any of the possible moves can get the king out of check
-        #     for move_obj in possible_moves:
-        #         temp_board = [row[:] for row in self.board]
-        #         temp_board[move_obj.startRow][move_obj.startCol] = "--"
-        #         temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
-        #         if not self.is_in_check(temp_board,self.whiteToMove):
-        #             return False  # At least one legal move can escape check
-        #
-        #     return True  # No legal moves to escape check, it's checkmate
-        # return False
+
     def is_stalemate(self):
         if not self.is_in_check(self.board, self.whiteToMove):
             possible_moves1 = self.generate_possible_moves()
@@ -134,21 +123,6 @@ class Gamestate():
                 return True
             else:
                 return False
-        #     if not possible_moves1:
-        #         return True  # No legal moves available, it's stalemate
-        #
-        #     for move_obj in possible_moves1:
-        #         temp_board1 = [row[:] for row in self.board]
-        #         temp_board1[move_obj.startRow][move_obj.startCol] = "--"
-        #         temp_board1[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
-        #
-        #         if not self.is_in_check(temp_board1, self.whiteToMove):
-        #             return False  # At least one legal move is available
-        #
-        #     return True  # All moves lead to check, it's stalemate
-        # else:
-        #
-        #     return False  # Player is in check, not stalemate
 
     def generate_possible_moves(self):
         possible_moves = []
@@ -169,15 +143,14 @@ class Gamestate():
                             elif move_obj.isValid(self.board):
                                 possible_moves.append(move_obj)
         # print(possible_moves)
-        print(len(possible_moves))
-        for i in possible_moves:
-            print(i.startRow, i.startCol)
-            print(i.endRow, i.endCol)
+        # print(len(possible_moves))
+        # for i in possible_moves:
+        #     print(i.startRow, i.startCol)
+        #     print(i.endRow, i.endCol)
         return possible_moves
 
     def makeMove(self, move):
-        # if move.checkmate(self.board):
-        #     print("Checkmate!")
+
 
         promotion_row = 0 if move.pieceMoved[0] == 'w' else 7
 
@@ -202,7 +175,7 @@ class Gamestate():
                 self.board[move.startRow][move.startCol] = "--"
 
                 self.board[move.endRow][move.endCol] = move.pieceMoved
-                self.moveLog.append(move)
+                # self.moveLog.append(move)
                 self.whiteToMove = not self.whiteToMove
         else:
             if (
@@ -214,50 +187,14 @@ class Gamestate():
                 self.board[move.startRow][move.startCol] = "--"
                 self.board[move.endRow][move.endCol] = move.pieceMoved
                 self.board[move.startRow][move.endCol] = "--"  # Remove the captured pawn
-                self.moveLog.append(move)
+                # self.moveLog.append(move)
                 self.whiteToMove = not self.whiteToMove
             else:
                 self.board[move.startRow][move.startCol] = "--"
                 self.board[move.endRow][move.endCol] = move.pieceMoved
-                self.moveLog.append(move)
+                # self.moveLog.append(move)
                 self.whiteToMove = not self.whiteToMove
 
-
-    # def is_in_check(self, board):
-    #     king_row = -1
-    #     king_col = -1
-    #     for row in range(len(board)):
-    #         for col in range(len(board[row])):
-    #             if self.board[row][col] == ('wK' if self.whiteToMove else 'bK'):
-    #                 king_row = row
-    #                 king_col = col
-    #                 break
-    #
-    #     opponent_color = 'b' if self.whiteToMove else 'w'
-    #     opponent_directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-    #
-    #     # Add possible knight move combinations
-    #     knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
-    #
-    #     # Add possible pawn attack directions
-    #     pawn_attacks = [(-1, 1), (-1, -1)] if self.whiteToMove else [(1, 1), (1, -1)]
-    #
-    #     for dr, dc in opponent_directions + knight_moves + pawn_attacks:
-    #         r, c = king_row + dr, king_col + dc
-    #         if 0 <= r < 8 and 0 <= c < 8:
-    #             piece = board[r][c]
-    #             if piece != "--":
-    #                 if piece[0] == opponent_color:
-    #                     if (piece[1] == 'Q' or
-    #                             (abs(dr) == 1 and abs(dc) == 0 and piece[1] == 'R') or  # Rook
-    #                             (abs(dr) == 0 and abs(dc) == 1 and piece[1] == 'R') or  # Rook
-    #                             (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'B') or  # Bishop
-    #                             (abs(dr) == 2 and abs(dc) == 1 and piece[1] == 'N') or  # Knight
-    #                             (abs(dr) == 1 and abs(dc) == 2 and piece[1] == 'N') or  # Knight
-    #                             (abs(dr) == 1 and abs(dc) == 1 and piece[1] == 'P')):  # Pawn
-    #                         return True
-    #
-    #     return False
 
 
 class move():
@@ -288,13 +225,7 @@ class move():
             self.has_queenside_rook_moved = False
             self.has_kingside_rook_moved = False
 
-    # def is_in_check_after_move(self):
-    #     # Simulate the move and check if it leads to check
-    #     temp_board = [row[:] for row in self.gamestate.board]
-    #     temp_board[self.endRow][self.endCol] = temp_board[self.startRow][self.startCol]
-    #     temp_board[self.startRow][self.startCol] = "--"
-    #
-    #     return self.is_in_check(temp_board)
+
 
     def is_square_attacked(self, row, col, board):
         opponent_color = 'w' if self.whitetomove else 'b'
@@ -357,68 +288,17 @@ class move():
 
         return False
 
-    # def is_checkmate(self,board,whitetomove,gamestate):
-    #     if self.is_in_check(board):
-    #         if self.whitetomove:
-    #             king_row, king_col = self.find_king(board)
-    #         else:
-    #             king_row, king_col = self.find_king(board)
-    #
-    #         for r in range(8):
-    #             for c in range(8):
-    #                 piece = board[r][c]
-    #                 if piece[0] == ("w" if self.whitetomove else "b"):
-    #                     for row in range(8):
-    #                         for col in range(8):
-    #                             move_obj = move((r, c), (row, col), board[r][c],whitetomove,gamestate)
-    #                             if self.isValid(move_obj):
-    #                                 # Simulate the move
-    #                                 temp_board = [row[:] for row in board]
-    #                                 temp_board[row][col] = temp_board[r][c]
-    #                                 temp_board[r][c] = "--"
-    #
-    #                                 if not self.is_in_check(temp_board):
-    #                                     return False  # At least one legal move can escape check
-    #         return True  # No legal moves to escape check, it's checkmate
-    #     return False  # King is not in check, no checkmate
-    # def find_king(self,board):
-    #     for r in range(8):
-    #         for c in range(8):
-    #             if board[r][c] == ('wK' if self.whitetomove else 'bK'):
-    #                 return r, c
-    # def checkmate(self,board):
-    #     king_row, king_col = self.find_king(board)
-    #
-    #     for r in range(8):
-    #         for c in range(8):
-    #             piece = board[r][c]
-    #             if piece[0] == ("w" if self.whitetomove else "b"):
-    #                 for row in range(8):
-    #                     for col in range(8):
-    #                         move_obj = move((r, c), (row, col), board,self.whitetomove,self.gamestate)
-    #
-    #                         if move_obj.isValid(board):
-    #                             # Simulate the move and check if it leads to check
-    #                             if not move_obj.is_in_check_after_move():
-    #                                 return False
-    #     return True
-
     def isValid(self, board):
-        # possible_moves=self.gamestate.generate_possible_moves()
 
-        # if self.is_pinned(board) and self.startRow != -1:
-        # Piece is pinned and is not the king (startRow != -1)
-        # return False  # The piece is pinned, it cannot move
+
+
         if (self.pieceMoved[0] == 'w' and self.whitetomove == True) or (
                 self.pieceMoved[0] == 'b' and self.whitetomove == False):
             temp_board = [row[:] for row in board]
             temp_board[self.startRow][self.startCol] = "--"
             temp_board[self.endRow][self.endCol] = self.pieceMoved
 
-            # print(temp_board)
-            # print(self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove))
 
-            # Check if the move would put the king in check after it is made
             if self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove):
                 return False
             elif self.pieceMoved == 'bN' or self.pieceMoved == 'wN':
@@ -741,38 +621,3 @@ class move():
 
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
-# class checkmate:
-#     def __init__(self, gamestate,move1):
-#         self.gamestate = gamestate
-#         self.move1 = move1
-#     def find_king(self,board):
-#         king_type = "wK" if self.gamestate.whiteToMove else "bK"
-#         for r in range(len(board)):
-#             for c in range(len(board[r])):
-#                 if board[r][c] == king_type:
-#                     return r, c
-#
-#     def is_checkmate(self,board):
-#         if self.move1.is_in_check(board):
-#             if self.gamestate.whiteToMove:
-#                 king_row, king_col = self.find_king(board)
-#             else:
-#                 king_row, king_col = self.find_king(board)
-#
-#             for r in range(8):
-#                 for c in range(8):
-#                     piece = board[r][c]
-#                     if piece[0] == ("b" if self.gamestate.whiteToMove else "w"):
-#                         for row in range(8):
-#                             for col in range(8):
-#                                 move_obj = move((r, c), (row, col), board[r][c], self.gamestate.whiteToMove, self.gamestate)
-#                                 if self.move1.isValid(move_obj):
-#                                     # Simulate the move
-#                                     temp_board = [row[:] for row in board]
-#                                     temp_board[row][col] = temp_board[r][c]
-#                                     temp_board[r][c] = "--"
-#
-#                                     if not self.move1.is_in_check(temp_board):
-#                                         return False  # At least one legal move can escape check
-#             return True  # No legal moves to escape check, it's checkmate
-#         return False  # King is not in check, no checkmate
