@@ -14,6 +14,7 @@ class Gamestate():
             ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
             ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
         ]
+        self.value = {'p': 1, 'Q': 9, 'R': 5, 'B': 3, 'N': 3,'K':1000}
         self.whiteToMove = True
         self.moveLog = []
         self.wKingMoved = False
@@ -53,7 +54,8 @@ class Gamestate():
         if piece not in ['Q', 'R', 'N', 'B']:
             piece = 'Q'  # Default to Queen
         return piece
-    def is_in_check(self, board,whitetoMove):
+
+    def is_in_check(self, board, whitetoMove):
         king_row = -1
         king_col = -1
         for row in range(len(board)):
@@ -103,23 +105,22 @@ class Gamestate():
 
 
 
-        elif self.is_in_check(self.board,self.whiteToMove):
+        elif self.is_in_check(self.board, self.whiteToMove):
             # king_row, king_col = self.find_king(self.board)
 
             # Generate all possible moves for the current player
             possible_moves = self.generate_possible_moves()
             print(possible_moves)
-            if(len(possible_moves))==0:
+            if (len(possible_moves)) == 0:
                 return True
             else:
                 return False
-
 
     def is_stalemate(self):
         if not self.is_in_check(self.board, self.whiteToMove):
             possible_moves1 = self.generate_possible_moves()
             # print(possible_moves1)
-            if(len(possible_moves1))==0:
+            if (len(possible_moves1)) == 0:
                 return True
             else:
                 return False
@@ -132,13 +133,12 @@ class Gamestate():
                 if (piece[0] == 'w' and self.whiteToMove) or (piece[0] == 'b' and not self.whiteToMove):
                     for row in range(8):
                         for col in range(8):
-                            move_obj = move((r, c), (row, col), self.board,self.whiteToMove, self)
+                            move_obj = move((r, c), (row, col), self.board, self.whiteToMove, self)
                             temp_board = [row[:] for row in self.board]
                             temp_board[move_obj.startRow][move_obj.startCol] = "--"
                             temp_board[move_obj.endRow][move_obj.endCol] = move_obj.pieceMoved
 
-
-                            if self.is_in_check(temp_board,self.whiteToMove):
+                            if self.is_in_check(temp_board, self.whiteToMove):
                                 pass
                             elif move_obj.isValid(self.board):
                                 possible_moves.append(move_obj)
@@ -148,9 +148,33 @@ class Gamestate():
         #     print(i.startRow, i.startCol)
         #     print(i.endRow, i.endCol)
         return possible_moves
+    def calculate(self,turn,board):
+        val=0;
+        for i in board:
+            if(i[0]=='w'):
+                val= val+self.value[i[1]]
+            elif(i[0]=='b'):
+                val= val-self.value[i[1]]
+            else:
+                pass
+        return val
+
+    def bestmove(self,turn):
+        moves=self.generate_possible_moves()
+        eval={}
+        for i in moves:
+            temp_board = [row[:] for row in self.board]
+            temp_board[i.startRow][i.startCol] = "--"
+            temp_board[i.endRow][i.endCol] = i.pieceMoved
+            eval[i]=self.calculate(turn,temp_board)
+        return eval
+        if(turn==True):
+            
+
+
+
 
     def makeMove(self, move):
-
 
         promotion_row = 0 if move.pieceMoved[0] == 'w' else 7
 
@@ -196,7 +220,6 @@ class Gamestate():
                 self.whiteToMove = not self.whiteToMove
 
 
-
 class move():
     ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4, "5": 3, "6": 2, "7": 1, "8": 0}
     rowsToRanks = {v: k for k, v in ranksToRows.items()}
@@ -224,8 +247,6 @@ class move():
         else:
             self.has_queenside_rook_moved = False
             self.has_kingside_rook_moved = False
-
-
 
     def is_square_attacked(self, row, col, board):
         opponent_color = 'w' if self.whitetomove else 'b'
@@ -290,16 +311,13 @@ class move():
 
     def isValid(self, board):
 
-
-
         if (self.pieceMoved[0] == 'w' and self.whitetomove == True) or (
                 self.pieceMoved[0] == 'b' and self.whitetomove == False):
             temp_board = [row[:] for row in board]
             temp_board[self.startRow][self.startCol] = "--"
             temp_board[self.endRow][self.endCol] = self.pieceMoved
 
-
-            if self.gamestate.is_in_check(temp_board,self.gamestate.whiteToMove):
+            if self.gamestate.is_in_check(temp_board, self.gamestate.whiteToMove):
                 return False
             elif self.pieceMoved == 'bN' or self.pieceMoved == 'wN':
                 if (abs(self.endRow - self.startRow) == 2 and abs(self.endCol - self.startCol) == 1) or (
@@ -453,9 +471,10 @@ class move():
                     if (
 
                             (self.endRow - self.startRow) == 1 if not self.whitetomove else (
-                            self.endRow - self.startRow) == -1
+                                                                                                    self.endRow - self.startRow) == -1
 
-                            and board[self.endRow][self.endCol] != "--"
+                                                                                            and board[self.endRow][
+                                                                                                self.endCol] != "--"
 
                     ):  # Regular capture
 
@@ -520,14 +539,14 @@ class move():
 
                     if (
 
-
                             (self.startRow == 1 or self.startRow == 6)
 
                             and (((board[2][self.endCol] == "--"
 
-                            and board[3][self.endCol] == "--") and not self.whitetomove)
-                            or
-                                 ((board[5][self.endCol]=="--") and board[4][self.endCol]=="--" and self.whitetomove)
+                                   and board[3][self.endCol] == "--") and not self.whitetomove)
+                                 or
+                                 ((board[5][self.endCol] == "--") and board[4][
+                                     self.endCol] == "--" and self.whitetomove)
                     )
 
                     ):
@@ -591,7 +610,7 @@ class move():
                             return (
                                     board[0][5] == "--"
                                     and board[0][6] == "--"
-                                    and not self.gamestate.is_in_check(board,self.whitetomove)
+                                    and not self.gamestate.is_in_check(board, self.whitetomove)
                                 # and not self.is_square_attacked(0, 4, board)
                                 # and not self.is_square_attacked(0, 5, board)
                                 # and not self.is_square_attacked(0, 6, board)
@@ -603,7 +622,7 @@ class move():
                                     board[0][1] == "--"
                                     and board[0][2] == "--"
                                     and board[0][3] == "--"
-                                    and not self.gamestate.is_in_check(board,self.whitetomove)
+                                    and not self.gamestate.is_in_check(board, self.whitetomove)
                                 # and not self.is_square_attacked(0, 4, board)
                                 # and not self.is_square_attacked(0, 3, board)
                                 # and not self.is_square_attacked(0, 2, board)

@@ -60,6 +60,7 @@ def main():
                         gs.makeMove(Move)
                         print(gs.moveLog)
                         print(Move.getChessNotation())
+                        print(gs.bestmove(gs.whiteToMove))
                         if(gs.is_checkmate()):
                             print("Its Checkmate!")
                             running=False
