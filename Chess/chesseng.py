@@ -14,7 +14,7 @@ class Gamestate():
             ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
             ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
         ]
-        self.value = {'p': 1, 'Q': 9, 'R': 5, 'B': 3, 'N': 3,'K':1000}
+        self.value = {'p': 1, 'Q': 9, 'R': 5, 'B': 3, 'N': 3,'K':1000,'-':0}
         self.whiteToMove = True
         self.moveLog = []
         self.wKingMoved = False
@@ -151,12 +151,14 @@ class Gamestate():
     def calculate(self,turn,board):
         val=0;
         for i in board:
-            if(i[0]=='w'):
-                val= val+self.value[i[1]]
-            elif(i[0]=='b'):
-                val= val-self.value[i[1]]
-            else:
-                pass
+            for j in i:
+                if(j!='--'):
+                    if(j[0]=='w'):
+                        val= val+self.value[j[1]]
+                    elif(j[0]=='b'):
+                        val= val-self.value[j[1]]
+                    else:
+                        pass
         return val
 
     def bestmove(self,turn):
@@ -167,10 +169,13 @@ class Gamestate():
             temp_board[i.startRow][i.startCol] = "--"
             temp_board[i.endRow][i.endCol] = i.pieceMoved
             eval[i]=self.calculate(turn,temp_board)
-        return eval
-        if(turn==True):
-            
 
+        if(turn==True):
+            move = max(eval, key=lambda x: eval[x])
+        else:
+            move= min(eval,key=lambda x:eval[x])
+        print(eval[move])
+        return (move.getChessNotation())
 
 
 
